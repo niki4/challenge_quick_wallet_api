@@ -24,10 +24,14 @@ func main() {
 // Response in JSON depending on request "Accept" header
 // Can be enhanced to support more response formats, e.g. HTML or XML
 func render(c *gin.Context, data gin.H) {
-	switch c.Request.Header.Get("Accept") {
-	case "application/json":
+	acceptType := c.Request.Header.Get("Accept")
+	contentType := c.Request.Header.Get("Content-Type")
+	jsonType := "application/json"
+
+	if (c.Request.Method == http.MethodGet && acceptType == jsonType) ||
+		(c.Request.Method == http.MethodPost && contentType == jsonType) {
 		c.JSON(http.StatusOK, data["payload"])
-	default:
+	} else {
 		c.AbortWithStatusJSON(http.StatusBadRequest, apiError{"incorrect request"})
 	}
 }
