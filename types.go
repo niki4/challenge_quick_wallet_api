@@ -8,5 +8,5 @@ type wallet struct {
 }
 
 type apiError struct {
-	Reason string `json:"reason"`
+	Error string `json:"error"`
 }
