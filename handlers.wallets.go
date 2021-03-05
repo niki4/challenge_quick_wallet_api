@@ -21,9 +21,39 @@ func getWalletBalance(c *gin.Context) {
 }
 
 func creditMoneyToWallet(c *gin.Context) {
+	creditW := new(wallet)
+	if err := c.BindJSON(creditW); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
 
+	walletID, err := strconv.Atoi(c.Param("wallet_id"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
+
+	if wallet, err := creditWallet(walletID, creditW.Balance); err == nil {
+		render(c, gin.H{"payload": wallet}) // return updated wallet on success case
+	} else {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError, apiError{err.Error()}) // e.g., credit balance failed
+	}
 }
 
 func debitMoneyFromWallet(c *gin.Context) {
+	debitW := new(wallet)
+	if err := c.BindJSON(debitW); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
 
+	walletID, err := strconv.Atoi(c.Param("wallet_id"))
+	if err == nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
+
+	if wallet, err := debitWallet(walletID, debitW.Balance); err == nil {
+		render(c, gin.H{"payload": wallet}) // return updated wallet on success case
+	} else {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError, apiError{err.Error()}) // e.g., debit balance failed
+	}
 }
