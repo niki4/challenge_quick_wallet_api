@@ -13,7 +13,6 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 
 	router = gin.Default()
-	router.LoadHTMLGlob("templates/*") // cache templates in memory
 
 	// register handlers
 	initializeRoutes()
@@ -24,14 +23,11 @@ func main() {
 
 // Response in JSON depending on request "Accept" header
 // Can be enhanced to support more response formats, e.g. HTML or XML
-func render(c *gin.Context, templateName string, data gin.H) {
-	if templateName == "" {
-		templateName = "fallback.html"
-	}
+func render(c *gin.Context, data gin.H) {
 	switch c.Request.Header.Get("Accept") {
 	case "application/json":
 		c.JSON(http.StatusOK, data["payload"])
 	default:
-		c.HTML(http.StatusBadRequest, templateName, data)
+		c.AbortWithStatusJSON(http.StatusBadRequest, apiError{"incorrect request"})
 	}
 }
