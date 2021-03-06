@@ -22,6 +22,9 @@ func GetWalletByID(id int) (*types.Wallet, error) {
 
 // CreditWallet adds a credit amount to the wallet balance
 func CreditWallet(id int, credit decimal.Decimal) (*types.Wallet, error) {
+	if credit.IsNegative() {
+		return nil, errors.New("credit amount cannot be negative")
+	}
 	w, ok := wallets[id]
 	if !ok {
 		return nil, errors.New("wallet not found")
@@ -33,6 +36,9 @@ func CreditWallet(id int, credit decimal.Decimal) (*types.Wallet, error) {
 // DebitWallet subtracts a debit amount from the wallet balance,
 // returns error in case not sufficient funds
 func DebitWallet(id int, debit decimal.Decimal) (*types.Wallet, error) {
+	if debit.IsNegative() {
+		return nil, errors.New("debit amount cannot be negative")
+	}
 	w, ok := wallets[id]
 	if !ok {
 		return nil, errors.New("wallet not found")
