@@ -1,0 +1,48 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    networks:
+      - main
+    volumes:
+      - quick-wallet-app:/var/lib/mysql
+    #    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      # Empty passwords are not safe! Use this config for demo only.
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # value is arbitrary
+      MYSQL_DATABASE: "wallets_db"       # create DB wallets_db automatically
+      ENV: "dev"
+      # You may want to utilize following ENVs for prod environment
+    #      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    #      MYSQL_DATABASE: ${DB_NAME}
+    #      MYSQL_USER: ${DB_USER}
+    #      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 3306:3306
+
+  adminer: # service to admin mysql content
+    image: adminer:latest
+    networks:
+      - main
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    depends_on:
+      - mysql
+    ports:
+      - 8080:8080
+
+  app_wallet:
+    build: .
+    ports:
+      - 8080:8080
+    networks:
+      - main
+    environment:
+      DB_HOST: mysql  # can be changed to other container, e.g. postgres
+
+volumes:
+  quick-wallet-app:
+
+networks:
+  main:
+    driver: bridge
