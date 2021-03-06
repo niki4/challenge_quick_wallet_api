@@ -1,26 +1,27 @@
-package main
+package models
 
 import (
+	"challenge_quick_wallet_api/types"
 	"errors"
 	"github.com/shopspring/decimal"
 )
 
 // this is for demo only until we have not implemented DB layer
-var wallets = map[int]*wallet{
-	1: &wallet{1, decimal.RequireFromString("12.34")},
-	2: &wallet{2, decimal.RequireFromString("56.78")},
+var wallets = map[int]*types.Wallet{
+	1: {1, decimal.RequireFromString("12.34")},
+	2: {2, decimal.RequireFromString("56.78")},
 }
 
-// return a wallet with a specified ID
-func getWalletByID(id int) (*wallet, error) {
+// GetWalletByID returns a wallet with a specified ID
+func GetWalletByID(id int) (*types.Wallet, error) {
 	if w, ok := wallets[id]; ok {
 		return w, nil
 	}
 	return nil, errors.New("wallet not found")
 }
 
-// creditWallet add a credit amount to the wallet balance
-func creditWallet(id int, credit decimal.Decimal) (*wallet, error) {
+// CreditWallet adds a credit amount to the wallet balance
+func CreditWallet(id int, credit decimal.Decimal) (*types.Wallet, error) {
 	w, ok := wallets[id]
 	if !ok {
 		return nil, errors.New("wallet not found")
@@ -29,9 +30,9 @@ func creditWallet(id int, credit decimal.Decimal) (*wallet, error) {
 	return w, nil
 }
 
-// debitWallet subtract a debit amount from the wallet balance,
+// DebitWallet subtracts a debit amount from the wallet balance,
 // returns error in case not sufficient funds
-func debitWallet(id int, debit decimal.Decimal) (*wallet, error) {
+func DebitWallet(id int, debit decimal.Decimal) (*types.Wallet, error) {
 	w, ok := wallets[id]
 	if !ok {
 		return nil, errors.New("wallet not found")

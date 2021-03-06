@@ -1,12 +1,12 @@
-package main
+package types
 
 import "github.com/shopspring/decimal"
 
-type wallet struct {
+type Wallet struct {
 	ID      int             `json:"id"`
 	Balance decimal.Decimal `json:"balance"`
 }
 
-type apiError struct {
+type ApiError struct {
 	Error string `json:"error"`
 }
