@@ -3,7 +3,10 @@ package main
 import "challenge_quick_wallet_api/handlers"
 
 func initializeRoutes() {
-	router.GET("/api/v1/wallets/:wallet_id/balance", handlers.GetWalletBalance)
-	router.POST("/api/v1/wallets/:wallet_id/credit", handlers.CreditMoneyToWallet)
-	router.POST("/api/v1/wallets/:wallet_id/debit", handlers.DebitMoneyFromWallet)
+	v1 := router.Group("/api/v1")
+	{
+		v1.GET("/wallets/:wallet_id/balance", handlers.GetWalletBalance)
+		v1.POST("/wallets/:wallet_id/credit", handlers.CreditMoneyToWallet)
+		v1.POST("/wallets/:wallet_id/debit", handlers.DebitMoneyFromWallet)
+	}
 }
