@@ -1,8 +1,8 @@
 package views
 
 import (
-	"challenge_quick_wallet_api/types"
 	"github.com/gin-gonic/gin"
+	"github.com/niki4/challenge_quick_wallet_api/types"
 	"net/http"
 )
 

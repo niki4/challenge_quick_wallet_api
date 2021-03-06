@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"challenge_quick_wallet_api/models"
-	"challenge_quick_wallet_api/types"
-	"challenge_quick_wallet_api/views"
 	"github.com/gin-gonic/gin"
+	"github.com/niki4/challenge_quick_wallet_api/models"
+	"github.com/niki4/challenge_quick_wallet_api/types"
+	"github.com/niki4/challenge_quick_wallet_api/views"
 	"net/http"
 	"strconv"
 )

@@ -1,6 +1,6 @@
 package main
 
-import "challenge_quick_wallet_api/handlers"
+import "github.com/niki4/challenge_quick_wallet_api/handlers"
 
 func initializeRoutes() {
 	v1 := router.Group("/api/v1")
