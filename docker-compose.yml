@@ -10,7 +10,7 @@ services:
     environment:
       # Empty passwords are not safe! Use this config for demo only.
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # value is arbitrary
-      MYSQL_DATABASE: "wallets_db"       # create DB wallets_db automatically
+      MYSQL_DATABASE: "wallet_db"       # create DB wallet_db automatically
       ENV: "dev"
       # You may want to utilize following ENVs for prod environment
     #      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -29,7 +29,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - 8080:8080
+      - 8282:8080
 
   app_wallet:
     build: .
@@ -39,6 +39,7 @@ services:
       - main
     environment:
       DB_HOST: mysql  # can be changed to other container, e.g. postgres
+      DEBUG: "true" # enables debug mode, so that app generates some wallets for test, etc.
 
 volumes:
   quick-wallet-app:
