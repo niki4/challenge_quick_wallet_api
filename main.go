@@ -4,13 +4,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/niki4/challenge_quick_wallet_api/models"
 	"log"
+	"os"
 )
 
 var router *gin.Engine
 
 func main() {
-	// Set Gin to production mode. Comment the line for local debug.
-	gin.SetMode(gin.ReleaseMode)
+	// if DEBUG env var is not set, use production mode.
+	debugMode := os.Getenv("DEBUG")
+	if debugMode == "" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		log.Println("************** DEBUG MODE ENABLED **************")
+	}
 
 	router = gin.Default()
 
