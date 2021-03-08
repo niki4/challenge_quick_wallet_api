@@ -14,7 +14,10 @@ func GetWalletBalance(c *gin.Context) {
 	if walletID, err := strconv.Atoi(c.Param("wallet_id")); err == nil {
 		// Check if the Wallet exist
 		if wallet, err := models.GetWalletByID(walletID); err == nil {
-			views.Render(c, gin.H{"payload": wallet})
+			views.Render(c, gin.H{"payload": map[string]interface{}{
+				"id":      wallet.ID,
+				"balance": wallet.Balance,
+			}})
 		} else {
 			c.AbortWithStatus(http.StatusNotFound)
 		}
@@ -35,7 +38,10 @@ func CreditMoneyToWallet(c *gin.Context) {
 	}
 
 	if wallet, err := models.CreditWallet(walletID, creditW.Balance); err == nil {
-		views.Render(c, gin.H{"payload": wallet}) // return updated wallet on success case
+		views.Render(c, gin.H{"payload": map[string]interface{}{
+			"id":      wallet.ID,
+			"balance": wallet.Balance,
+		}}) // return updated wallet on success case
 	} else {
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError, types.ApiError{Error: err.Error()}) // e.g., credit balance failed
@@ -54,7 +60,10 @@ func DebitMoneyFromWallet(c *gin.Context) {
 	}
 
 	if wallet, err := models.DebitWallet(walletID, debitW.Balance); err == nil {
-		views.Render(c, gin.H{"payload": wallet}) // return updated wallet on success case
+		views.Render(c, gin.H{"payload": map[string]interface{}{
+			"id":      wallet.ID,
+			"balance": wallet.Balance,
+		}}) // return updated wallet on success case
 	} else {
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError, types.ApiError{Error: err.Error()}) // e.g., debit balance failed
