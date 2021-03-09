@@ -20,9 +20,11 @@ func GetWalletBalance(c *gin.Context) {
 			}})
 		} else {
 			c.AbortWithStatus(http.StatusNotFound)
+			return
 		}
 	} else {
 		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 }
 
@@ -30,11 +32,13 @@ func CreditMoneyToWallet(c *gin.Context) {
 	creditW := new(types.Wallet)
 	if err := c.BindJSON(creditW); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 
 	walletID, err := strconv.Atoi(c.Param("wallet_id"))
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 
 	if wallet, err := models.CreditWallet(walletID, creditW.Balance); err == nil {
@@ -45,6 +49,7 @@ func CreditMoneyToWallet(c *gin.Context) {
 	} else {
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError, types.ApiError{Error: err.Error()}) // e.g., credit balance failed
+		return
 	}
 }
 
@@ -52,11 +57,13 @@ func DebitMoneyFromWallet(c *gin.Context) {
 	debitW := new(types.Wallet)
 	if err := c.BindJSON(debitW); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 
 	walletID, err := strconv.Atoi(c.Param("wallet_id"))
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 
 	if wallet, err := models.DebitWallet(walletID, debitW.Balance); err == nil {
@@ -67,5 +74,6 @@ func DebitMoneyFromWallet(c *gin.Context) {
 	} else {
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError, types.ApiError{Error: err.Error()}) // e.g., debit balance failed
+		return
 	}
 }
