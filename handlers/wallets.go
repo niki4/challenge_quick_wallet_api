@@ -55,7 +55,7 @@ func DebitMoneyFromWallet(c *gin.Context) {
 	}
 
 	walletID, err := strconv.Atoi(c.Param("wallet_id"))
-	if err == nil {
+	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
