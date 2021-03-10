@@ -62,6 +62,25 @@ Content-Type: application/json; charset=utf-8
 
 It will return error in case requested debit amount exceed wallet balance.
 
+### Tests
+
+To run test cases, perform following command being in the directory with cloned repo:
+
+```bash
+go test ./... -v
+```
+
+It should produce output like below:
+
+```
+...
+--- PASS: TestInit (0.00s)
+    --- PASS: TestInit/TestRepository_CreditWallet (0.00s)
+    --- PASS: TestInit/TestRepository_DebitWallet (0.00s)
+    --- PASS: TestInit/TestRepository_GetWalletByID (0.00s)
+...
+```
+
 ### Context
 
 You are responsible for managing the wallets of the players of an online casino, and you need to provide an API for
