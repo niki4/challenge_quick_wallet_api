@@ -2,18 +2,17 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/niki4/challenge_quick_wallet_api/models"
 	"github.com/niki4/challenge_quick_wallet_api/types"
 	"github.com/niki4/challenge_quick_wallet_api/views"
 	"net/http"
 	"strconv"
 )
 
-func GetWalletBalance(c *gin.Context) {
+func (e *Env) GetWalletBalance(c *gin.Context) {
 	// Check if the Wallet ID is valid
 	if walletID, err := strconv.Atoi(c.Param("wallet_id")); err == nil {
 		// Check if the Wallet exist
-		if wallet, err := models.GetWalletByID(walletID); err == nil {
+		if wallet, err := e.Repository.GetWalletByID(walletID); err == nil {
 			views.Render(c, gin.H{"payload": map[string]interface{}{
 				"id":      wallet.ID,
 				"balance": wallet.Balance,
@@ -28,7 +27,7 @@ func GetWalletBalance(c *gin.Context) {
 	}
 }
 
-func CreditMoneyToWallet(c *gin.Context) {
+func (e *Env) CreditMoneyToWallet(c *gin.Context) {
 	creditW := new(types.Wallet)
 	if err := c.BindJSON(creditW); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
@@ -41,7 +40,7 @@ func CreditMoneyToWallet(c *gin.Context) {
 		return
 	}
 
-	if wallet, err := models.CreditWallet(walletID, creditW.Balance); err == nil {
+	if wallet, err := e.Repository.CreditWallet(walletID, creditW.Balance); err == nil {
 		views.Render(c, gin.H{"payload": map[string]interface{}{
 			"id":      wallet.ID,
 			"balance": wallet.Balance,
@@ -53,7 +52,7 @@ func CreditMoneyToWallet(c *gin.Context) {
 	}
 }
 
-func DebitMoneyFromWallet(c *gin.Context) {
+func (e *Env) DebitMoneyFromWallet(c *gin.Context) {
 	debitW := new(types.Wallet)
 	if err := c.BindJSON(debitW); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
@@ -66,7 +65,7 @@ func DebitMoneyFromWallet(c *gin.Context) {
 		return
 	}
 
-	if wallet, err := models.DebitWallet(walletID, debitW.Balance); err == nil {
+	if wallet, err := e.Repository.DebitWallet(walletID, debitW.Balance); err == nil {
 		views.Render(c, gin.H{"payload": map[string]interface{}{
 			"id":      wallet.ID,
 			"balance": wallet.Balance,

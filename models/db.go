@@ -15,10 +15,9 @@ import (
 
 var (
 	maxConnectRetries = 10
-	db                *gorm.DB
 )
 
-func InitStorage() error {
+func InitStorage() (db *gorm.DB, err error) {
 	dbUser := "root"
 	dbPass := ""
 	dbName := "wallet_db"
@@ -27,7 +26,6 @@ func InitStorage() error {
 		dbHost = "localhost"
 	}
 	dbDebug := os.Getenv("DEBUG")
-	var err error
 
 	// To handle time.Time correctly, we included parseTime as a parameter to DSN.
 	// To fully support UTF-8 encoding, we changed charset=utf8 to charset=utf8mb4 in DSN.
@@ -44,7 +42,7 @@ func InitStorage() error {
 		if i == maxConnectRetries {
 			err = errors.New("couldn't connect to DB")
 			log.Println(err)
-			return err
+			return nil, err
 		}
 		waitSec := 3 * i
 		log.Println("Wait before retry DB connect:", waitSec, "seconds")
@@ -55,7 +53,7 @@ func InitStorage() error {
 	if err = db.AutoMigrate(&types.Wallet{}); err != nil {
 		err = errors.New("failed DB schema migration for Wallet")
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	// Create some wallets for testing in DB if debug mode is ON
@@ -70,6 +68,11 @@ func InitStorage() error {
 		db.CreateInBatches(walletsData, 5)
 		log.Printf("Test wallets has been created: \n%#v\n", walletsData)
 	}
+	return db, nil
+}
 
-	return nil
+func CreateRepository(db *gorm.DB) Repository {
+	return Repository{
+		db,
+	}
 }
