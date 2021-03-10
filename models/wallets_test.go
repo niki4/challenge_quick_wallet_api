@@ -66,3 +66,27 @@ func (s *Suite) TestRepository_GetWalletByID() {
 		Balance: decimal.RequireFromString(balance),
 	}, res))
 }
+
+func (s *Suite) TestRepository_CreditWallet() {
+	id := 2
+	balance := "50.00"
+	credit := decimal.RequireFromString("0.15")
+
+	updBalance := "50.15"
+	rows := sqlmock.NewRows([]string{"id", "balance"}).AddRow(id, balance)
+	exp := sqlmock.NewResult(0, 1) // (lastInsertID, rowsAffected)
+
+	s.mock.ExpectQuery("SELECT \\* FROM `wallets` WHERE `wallets`.`id` = ?").
+		WithArgs(id).
+		WillReturnRows(rows)
+	s.mock.ExpectExec("UPDATE `wallets` SET `balance`=?").
+		WithArgs(updBalance, id, id).
+		WillReturnResult(exp)
+
+	res, err := s.repository.CreditWallet(id, credit)
+	require.NoError(s.T(), err)
+	require.Nil(s.T(), deep.Equal(&types.Wallet{
+		ID:      uint(id),
+		Balance: decimal.RequireFromString(updBalance),
+	}, res))
+}
