@@ -8,6 +8,8 @@ import (
 	"strconv"
 )
 
+// GetWalletBalance handles requests for Wallet with given ID.
+// If wallet found - passes current balance to render function, if not found - abort request with status.
 func (e *Env) GetWalletBalance(c *gin.Context) {
 	// Check if the Wallet ID is valid
 	if walletID, err := strconv.Atoi(c.Param("wallet_id")); err == nil {
@@ -27,6 +29,8 @@ func (e *Env) GetWalletBalance(c *gin.Context) {
 	}
 }
 
+// CreditMoneyToWallet handles requests to credit Wallet with given ID for specified amount.
+// If wallet found - passes updated balance to render function, if not found - abort request with status.
 func (e *Env) CreditMoneyToWallet(c *gin.Context) {
 	creditW := new(types.Wallet)
 	if err := c.BindJSON(creditW); err != nil {
@@ -52,6 +56,8 @@ func (e *Env) CreditMoneyToWallet(c *gin.Context) {
 	}
 }
 
+// DebitMoneyFromWallet handles requests to debit Wallet with given ID for specified amount.
+// If wallet found - passes updated balance to render function, if not found - abort request with status.
 func (e *Env) DebitMoneyFromWallet(c *gin.Context) {
 	debitW := new(types.Wallet)
 	if err := c.BindJSON(debitW); err != nil {
