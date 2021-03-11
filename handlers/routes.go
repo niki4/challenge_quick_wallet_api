@@ -11,6 +11,7 @@ type Env struct {
 	router     *gin.Engine
 }
 
+// Init initialize handlers with injected Env object which incapsulates given DB conn & router
 func Init(conn *gorm.DB, router *gin.Engine) {
 	env := &Env{
 		Repository: models.CreateRepository(conn),
