@@ -18,7 +18,7 @@ services:
     #      MYSQL_USER: ${DB_USER}
     #      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - 3306:3306
+      - 3308:3308
 
   adminer: # service to admin mysql content
     image: adminer:latest

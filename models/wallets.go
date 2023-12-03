@@ -14,9 +14,12 @@ type Repository struct {
 // GetWalletByID returns a wallet with a specified ID
 func (p *Repository) GetWalletByID(id int) (*types.Wallet, error) {
 	w := new(types.Wallet)
-	p.DB.First(w, id)
-	if w.ID == 0 {
-		return nil, errors.New("wallet not found")
+	result := p.DB.First(w, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.New("wallet not found")
+		}
+		return nil, result.Error
 	}
 	return w, nil
 }
@@ -26,11 +29,22 @@ func (p *Repository) CreditWallet(id int, credit decimal.Decimal) (*types.Wallet
 	if credit.IsNegative() {
 		return nil, errors.New("credit amount cannot be negative")
 	}
+
 	w := new(types.Wallet)
-	res := p.DB.Find(w, id).Update("balance", w.Balance.Add(credit))
-	if res.Error != nil {
-		return nil, res.Error
+	result := p.DB.First(w, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.New("wallet not found")
+		}
+		return nil, result.Error
 	}
+
+	w.Balance = w.Balance.Add(credit)
+	result = p.DB.Save(w)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
 	return w, nil
 }
 
@@ -40,19 +54,24 @@ func (p *Repository) DebitWallet(id int, debit decimal.Decimal) (*types.Wallet, 
 	if debit.IsNegative() {
 		return nil, errors.New("debit amount cannot be negative")
 	}
+
 	w := new(types.Wallet)
-	p.DB.First(w, id)
-	if w.ID == 0 {
-		return nil, errors.New("wallet not found")
+	result := p.DB.First(w, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.New("wallet not found")
+		}
+		return nil, result.Error
 	}
 
 	if w.Balance.LessThan(debit) {
 		return nil, errors.New("not enough money in the wallet")
 	}
 
-	res := p.DB.Model(w).Update("balance", w.Balance.Sub(debit))
-	if res.Error != nil {
-		return nil, res.Error
+	w.Balance = w.Balance.Sub(debit)
+	result = p.DB.Save(w)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
 	return w, nil
